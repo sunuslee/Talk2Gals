@@ -45,5 +45,6 @@ int main()
                 }
         }
 EXIT:
+        close(sockfd);
         return 0;
 }

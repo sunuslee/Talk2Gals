@@ -52,5 +52,7 @@ int main()
                 }
         }
 EXIT:
+        close(newfd);
+        close(sockfd);
         return 0;
 }
