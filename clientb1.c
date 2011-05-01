@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
                 }
                 talk_fd = in_fd;
                 printf("talk2gals : connect to the connector!\nwe're good to talk!\n");
+                talk_fork(talk_fd);
         }
         else if(argc == 3 && (!strcmp(argv[1], "-c"))) /* we need to check if argv[2] is an address */
         {
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
                         connect(out_fd, (struct sockaddr *)&out_addr, len);
                         printf("Talk2Gals : Connection established\nWe're good to talk\n");
                         talk_fd = out_fd;
+                        talk_fork(talk_fd);
                 }
                 else 
                         goto ERROR;
@@ -83,7 +85,6 @@ int main(int argc, char *argv[])
                 printf("Argument Error! USEAGE:\n./Talk2Gals -s Starting as server\n");
                 printf("./Talk2Gals -c HOST_ADDR Starting as Client\n");
         }
-        talk_fork(talk_fd);
         /* Close all sockets and exit */
         close(listen_fd);
         close(in_fd);
@@ -133,7 +134,12 @@ void talk_fork(int fd)
                 while(1)
                 {
                         if(recv(fd, buf, BUF_SIZE, 0) > 0)
-                                printf("Get Message:\n %s",buf);
+                                printf("Get Message:\n%s",buf);
+                        if(!strcmp("exit\n",buf))
+                        {
+                                printf("She's offline!\n");
+                                return;
+                        }
                 }
         }
         else
@@ -144,6 +150,11 @@ void talk_fork(int fd)
                         {
                                 len = strlen(buf);
                                 send(fd, buf, len, 0);
+                                if(!strcmp("exit\n",buf))
+                                {
+                                        printf("You're offline!\n");
+                                        return;
+                                }
                         }
                 }
         }
