@@ -100,14 +100,13 @@ void talk(int fd)
         int send_len;
         tv.tv_sec = 10;
         tv.tv_usec = 0;
-        printf("fd = %d\n",fd);
         while(1)
         {
                 FD_ZERO(&fd_in);
                 FD_ZERO(&fd_out);
                 FD_SET(fd,&fd_in);
                 FD_SET(0, &fd_in);
-                if((retval = select(fd + 1, &fd_in, NULL, NULL, NULL)) != -1)
+                if((retval = select(fd + 1, &fd_in, NULL, NULL, NULL)) == -1)
                         printf("Talk2Gals : select error!\n");
                 if(FD_ISSET(0, &fd_in))
                 {
@@ -125,7 +124,7 @@ void talk(int fd)
                 if(FD_ISSET(fd, &fd_in))
                 {
                         memset(buf, 0,BUF_SIZE);
-                        printf("Got Message\n");
+                        printf("Got Message :\n");
                         recv(fd, buf, BUF_SIZE, 0);
                         printf("%s",buf);
                         if(!strcmp("exit\n",buf))
