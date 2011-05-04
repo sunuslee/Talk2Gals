@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
         struct addrinfo *ai;
         char connect_addr[INET_ADDRSTRLEN];
         socklen_t len;
-        bzero(&(listen_addr.sin_zero),sizeof(listen_addr.sin_zero));
-        bzero(&(in_addr.sin_zero), sizeof(in_addr.sin_zero));
-        bzero(&(out_addr.sin_zero), sizeof(out_addr.sin_zero));
+        memset(&(listen_addr.sin_zero), 0, sizeof(listen_addr.sin_zero));
+        memset(&(in_addr.sin_zero), 0, sizeof(in_addr.sin_zero));
+        memset(&(out_addr.sin_zero), 0, sizeof(out_addr.sin_zero));
 
         listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
                         printf("Talk2Gals : Connector addr : %s , port = %d\n",connect_addr, out_addr.sin_port);
                 }
                 printf("Talk2Gals : Connect to the connector!\nWe're good to talk!\n");
-//*/             talk_fork(out_fd);
+//*                talk_fork(out_fd);
                 talk(in_fd);
         }
         else if(argc == 3 && (!strcmp(argv[1], "-c"))) /* we need to check if argv[2] is an address */
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 
 void talk(int fd)
 {
-        fd_set fd_in,fd_out;
+        fd_set fd_in;
         struct timeval tv;
         int retval;
         int send_len;
@@ -103,7 +103,6 @@ void talk(int fd)
         while(1)
         {
                 FD_ZERO(&fd_in);
-                FD_ZERO(&fd_out);
                 FD_SET(fd,&fd_in);
                 FD_SET(0, &fd_in);
                 if((retval = select(fd + 1, &fd_in, NULL, NULL, NULL)) == -1)
@@ -118,7 +117,7 @@ void talk(int fd)
                         if(!strcmp("exit\n",buf))
                         {
                                 printf("You're offline now!\n");
-                                goto DONE;
+                                goto EXIT;
                         }
                 }
                 if(FD_ISSET(fd, &fd_in))
@@ -130,11 +129,11 @@ void talk(int fd)
                         if(!strcmp("exit\n",buf))
                         {
                                 printf("She's offline now!\n");
-                                goto DONE;
+                                goto EXIT;
                         }
                 }
         }
-DONE:
+EXIT:
         return;
 }
 void talk_fork(int fd)
