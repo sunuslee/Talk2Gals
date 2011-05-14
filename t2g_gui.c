@@ -224,7 +224,10 @@ void send_msg(int *fd)
         return;
 }
 
-/*data and cond it useless in this function,the only reason i did this is to make gcc happy*/
+/* 
+ * data and cond is useless in this function,the only reason i did this is to make gcc happy
+ * the source is file descriptor
+ */
 void recv_msg(gpointer data, int source, int cond) 
 {
         ssize_t recv_len;
