@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <winsock2>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <sys/types.h>
